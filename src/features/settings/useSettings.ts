@@ -16,7 +16,7 @@ export function useSettings() {
 
   const setTextSize = useCallback(
     (size: number) =>
-      update({ ...settings, textSize: Math.min(24, Math.max(12, size)) }),
+      update({ ...settings, textSize: Math.min(36, Math.max(14, size)) }),
     [settings, update]
   );
 

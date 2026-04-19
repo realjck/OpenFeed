@@ -6,7 +6,7 @@ export interface Feed {
 }
 
 export interface Settings {
-  textSize: number;  // px, range 12–24, default 16
+  textSize: number;  // px, range 14–36, default 18
   theme: 'light' | 'dark';
 }
 
@@ -34,6 +34,6 @@ export const FEED_COLORS = [
 ] as const;
 
 export const DEFAULT_SETTINGS: Settings = {
-  textSize: 16,
+  textSize: 18,
   theme: 'dark',
 };
