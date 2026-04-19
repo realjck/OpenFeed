@@ -1,0 +1,104 @@
+import { XMLParser } from 'fast-xml-parser';
+import type { Article } from '../types';
+
+const parser = new XMLParser({
+  ignoreAttributes: false,
+  attributeNamePrefix: '@_',
+  isArray: (name) => ['item', 'entry', 'link'].includes(name),
+});
+
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function extractImageFromHtml(html: string): string | undefined {
+  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  return match?.[1];
+}
+
+function getDomain(url: string): string {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return '';
+  }
+}
+
+export interface ParsedFeed {
+  channelTitle: string;
+  articles: Article[];
+}
+
+export function parseFeed(
+  xml: string,
+  feedId: string,
+  feedColor: string,
+  feedName: string
+): ParsedFeed {
+  const parsed = parser.parse(xml);
+
+  // Atom feed
+  if (parsed.feed) {
+    const feed = parsed.feed;
+    const channelTitle: string = feed.title ?? feedName;
+    const entries = feed.entry ?? [];
+    const articles: Article[] = entries.map((entry: any) => {
+      const linkArr: any[] = Array.isArray(entry.link) ? entry.link : [entry.link];
+      const linkObj = linkArr.find((l: any) => typeof l === 'object' && l['@_href']);
+      const link: string = linkObj ? linkObj['@_href'] : (typeof linkArr[0] === 'string' ? linkArr[0] : '');
+      const rawDesc: string = String(entry.summary ?? entry.content ?? '');
+      return {
+        feedId,
+        feedColor,
+        feedName,
+        title: String(entry.title ?? ''),
+        description: stripHtml(rawDesc),
+        link,
+        pubDate: new Date(entry.published ?? entry.updated ?? 0),
+        imageUrl: extractImageFromHtml(rawDesc),
+        sourceDomain: getDomain(link),
+      };
+    });
+    return { channelTitle, articles };
+  }
+
+  // RSS 2.0
+  const channel = parsed?.rss?.channel ?? {};
+  const channelTitle: string = channel.title ?? feedName;
+  const items: any[] = channel.item ?? [];
+  const articles: Article[] = items.map((item: any) => {
+    const rawLink = item.link;
+    const link: string = Array.isArray(rawLink) ? (rawLink[0] ?? '') : (rawLink ?? '');
+    const rawDesc: string = String(item.description ?? '');
+    const enclosureUrl: string | undefined =
+      item.enclosure?.['@_url'] &&
+      String(item.enclosure['@_type'] ?? '').startsWith('image/')
+        ? item.enclosure['@_url']
+        : undefined;
+    return {
+      feedId,
+      feedColor,
+      feedName,
+      title: String(item.title ?? ''),
+      description: stripHtml(rawDesc),
+      link,
+      pubDate: new Date(item.pubDate ?? 0),
+      imageUrl: enclosureUrl ?? extractImageFromHtml(rawDesc),
+      sourceDomain: getDomain(link),
+    };
+  });
+  return { channelTitle, articles };
+}
+
+export async function fetchFeed(
+  url: string,
+  feedId: string,
+  feedColor: string,
+  feedName: string
+): Promise<ParsedFeed> {
+  const workerUrl = import.meta.env.VITE_WORKER_URL;
+  const response = await fetch(`${workerUrl}?url=${encodeURIComponent(url)}`);
+  if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
+  const xml = await response.text();
+  return parseFeed(xml, feedId, feedColor, feedName);
+}
