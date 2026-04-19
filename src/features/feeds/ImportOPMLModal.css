@@ -1,0 +1,78 @@
+.modal-body {
+  padding: 0 20px;
+}
+
+.url-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.url-input-group input {
+  flex: 1;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border);
+}
+
+.divider:not(:empty)::before {
+  margin-right: .5em;
+}
+
+.divider:not(:empty)::after {
+  margin-left: .5em;
+}
+
+.file-import-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.file-label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 10px;
+  border-radius: var(--radius);
+  border: 1px dashed var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-secondary:hover {
+  background: var(--surface3);
+  border-color: var(--text-muted);
+}
+
+.import-error {
+  color: #DC2626;
+  font-size: 13px;
+  margin-top: 10px;
+  padding: 8px;
+  background: rgba(220, 38, 38, 0.1);
+  border-radius: var(--radius);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}

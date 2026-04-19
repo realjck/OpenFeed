@@ -6,17 +6,21 @@ import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { ConfirmModal } from './components/ConfirmModal';
 import { AddFeedModal } from './features/feeds/AddFeedModal';
+import { ImportOPMLModal } from './features/feeds/ImportOPMLModal';
 import { ArticleList } from './features/articles/ArticleList';
 import type { Feed } from './types';
+import { FEED_COLORS } from './types';
+import { type OPMLFeed } from './lib/opml';
 import './index.css';
 
 export default function App() {
   const { settings, setTextSize, toggleTheme } = useSettings();
-  const { feeds, addFeed, updateFeed, removeFeed } = useFeeds();
+  const { feeds, addFeed, updateFeed, removeFeed, importFeeds } = useFeeds();
   const [activeFeedId, setActiveFeedId] = useState<string | null>(null);
   const { articles, loading, error, refresh } = useArticles(feeds, activeFeedId);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [importOPMLOpen, setImportOPMLOpen] = useState(false);
   const [editingFeed, setEditingFeed] = useState<Feed | null>(null);
   const [deletingFeed, setDeletingFeed] = useState<Feed | null>(null);
 
@@ -38,6 +42,22 @@ export default function App() {
     setModalOpen(false);
     setEditingFeed(null);
   }
+
+  async function handleImportOPML(importedFeeds: OPMLFeed[]) {
+    const newFeedsData = importedFeeds
+      .filter((f) => !feeds.some((existing) => existing.url === f.url))
+      .map((f) => ({
+        name: f.name,
+        url: f.url,
+        color: FEED_COLORS[Math.floor(Math.random() * FEED_COLORS.length)],
+      }));
+
+    if (newFeedsData.length > 0) {
+      await importFeeds(newFeedsData);
+    }
+    setImportOPMLOpen(false);
+  }
+
 
   function confirmDelete() {
     if (deletingFeed) {
@@ -69,6 +89,7 @@ export default function App() {
         feeds={feeds}
         onClose={() => setSidebarOpen(false)}
         onAddFeed={handleAddFeed}
+        onImportOPML={() => setImportOPMLOpen(true)}
         onEditFeed={handleEditFeed}
         onDeleteFeed={(id) => setDeletingFeed(feeds.find((f) => f.id === id) || null)}
       />
@@ -86,6 +107,12 @@ export default function App() {
           onSave={addFeed}
           onUpdate={updateFeed}
           onClose={handleCloseModal}
+        />
+      )}
+      {importOPMLOpen && (
+        <ImportOPMLModal
+          onImport={handleImportOPML}
+          onClose={() => setImportOPMLOpen(false)}
         />
       )}
       {deletingFeed && (

@@ -26,5 +26,14 @@ export function useFeeds() {
     setFeeds((prev) => prev.filter((f) => f.id !== id));
   }, []);
 
-  return { feeds, addFeed, updateFeed, removeFeed };
+  const importFeeds = useCallback(async (dataArray: Omit<Feed, 'id'>[]) => {
+    const newFeeds: Feed[] = dataArray.map((data) => ({ id: uuidv4(), ...data }));
+    // Batch save to DB
+    for (const feed of newFeeds) {
+      await saveFeed(feed);
+    }
+    setFeeds((prev) => [...prev, ...newFeeds]);
+  }, []);
+
+  return { feeds, addFeed, updateFeed, removeFeed, importFeeds };
 }
