@@ -4,6 +4,7 @@ import { useFeeds } from './features/feeds/useFeeds';
 import { useArticles } from './features/articles/useArticles';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
+import { ConfirmModal } from './components/ConfirmModal';
 import { AddFeedModal } from './features/feeds/AddFeedModal';
 import { ArticleList } from './features/articles/ArticleList';
 import type { Feed } from './types';
@@ -17,6 +18,7 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingFeed, setEditingFeed] = useState<Feed | null>(null);
+  const [deletingFeed, setDeletingFeed] = useState<Feed | null>(null);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', settings.theme);
@@ -35,6 +37,14 @@ export default function App() {
   function handleCloseModal() {
     setModalOpen(false);
     setEditingFeed(null);
+  }
+
+  function confirmDelete() {
+    if (deletingFeed) {
+      removeFeed(deletingFeed.id);
+      if (activeFeedId === deletingFeed.id) setActiveFeedId(null);
+      setDeletingFeed(null);
+    }
   }
 
   return (
@@ -60,7 +70,7 @@ export default function App() {
         onClose={() => setSidebarOpen(false)}
         onAddFeed={handleAddFeed}
         onEditFeed={handleEditFeed}
-        onDeleteFeed={removeFeed}
+        onDeleteFeed={(id) => setDeletingFeed(feeds.find((f) => f.id === id) || null)}
       />
       <main>
         <ArticleList
@@ -76,6 +86,16 @@ export default function App() {
           onSave={addFeed}
           onUpdate={updateFeed}
           onClose={handleCloseModal}
+        />
+      )}
+      {deletingFeed && (
+        <ConfirmModal
+          title="Delete Feed"
+          message={`Are you sure you want to delete "${deletingFeed.name}"?`}
+          confirmLabel="Delete"
+          danger
+          onConfirm={confirmDelete}
+          onCancel={() => setDeletingFeed(null)}
         />
       )}
     </div>

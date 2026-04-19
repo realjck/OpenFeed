@@ -82,7 +82,7 @@
 }
 
 .article-description {
-  font-size: 14px;
+  font-size: calc(var(--article-fs) - 4px);
   color: var(--text-muted);
   line-height: 1.6;
 }

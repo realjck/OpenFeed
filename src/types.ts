@@ -24,8 +24,8 @@ export interface Article {
 
 export const FEED_COLORS = [
   '#DC2626',
-  '#EA580C',
-  '#CA8A04',
+  '#F97316',
+  '#FFB800',
   '#16A34A',
   '#2563EB',
   '#7C3AED',

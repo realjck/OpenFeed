@@ -9,7 +9,7 @@ interface Props {
 }
 
 export function ArticleItem({ article, expanded, onToggle }: Props) {
-  const formattedDate = new Intl.DateTimeFormat('fr-FR', {
+  const formattedDate = new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -47,7 +47,11 @@ export function ArticleItem({ article, expanded, onToggle }: Props) {
                 />
               )}
               {article.description && (
-                <p className="article-description">{article.description}</p>
+                <p className="article-description">
+                  {article.description.length > 1000
+                    ? `${article.description.substring(0, 1000)}...`
+                    : article.description}
+                </p>
               )}
               <a
                 href={article.link}
