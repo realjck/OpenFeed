@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSettings } from './features/settings/useSettings';
 import { useFeeds } from './features/feeds/useFeeds';
 import { useArticles } from './features/articles/useArticles';
@@ -18,6 +18,10 @@ export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingFeed, setEditingFeed] = useState<Feed | null>(null);
 
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', settings.theme);
+  }, [settings.theme]);
+
   function handleAddFeed() {
     setEditingFeed(null);
     setModalOpen(true);
@@ -36,7 +40,7 @@ export default function App() {
 
   return (
     <div
-      data-theme={settings.theme}
+      className="app-container"
       style={{ '--article-fs': `${settings.textSize}px` } as React.CSSProperties}
     >
       <Navbar
