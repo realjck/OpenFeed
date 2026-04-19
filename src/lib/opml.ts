@@ -1,6 +1,4 @@
 import { XMLParser } from 'fast-xml-parser';
-import type { Feed } from '../types';
-import { FEED_COLORS } from '../types';
 
 const parser = new XMLParser({
   ignoreAttributes: false,
