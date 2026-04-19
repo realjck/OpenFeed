@@ -41,12 +41,13 @@
 }
 
 .sidebar-close {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 18px;
   transition: background var(--transition);
 }
 
@@ -70,8 +71,8 @@
 .sidebar-feed-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
+  gap: 12px;
+  padding: 12px 16px;
   transition: background var(--transition);
 }
 
@@ -111,18 +112,18 @@
 
 .sidebar-feed-actions {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .sidebar-feed-actions button {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 16px;
   transition: background var(--transition);
 }
 

@@ -30,7 +30,6 @@ export default function App() {
   function handleEditFeed(feed: Feed) {
     setEditingFeed(feed);
     setModalOpen(true);
-    setSidebarOpen(false);
   }
 
   function handleCloseModal() {

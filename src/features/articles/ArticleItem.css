@@ -41,6 +41,7 @@
 
 .article-title {
   font-size: var(--article-fs);
+  font-weight: 500;
   line-height: 1.4;
   word-break: break-word;
 }
@@ -67,17 +68,19 @@
 
 .article-link-btn {
   display: inline-block;
-  padding: 8px 16px;
-  background: #2563EB;
-  color: white;
+  padding: 8px 20px;
+  border: 1.5px solid var(--text);
+  background: transparent;
+  color: var(--text);
   border-radius: var(--radius);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
-  align-self: flex-start;
-  transition: background var(--transition);
+  align-self: center;
+  transition: all var(--transition);
 }
 
 .article-link-btn:hover {
-  background: #1d4ed8;
+  background: var(--text);
+  color: var(--bg);
 }
