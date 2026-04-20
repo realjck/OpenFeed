@@ -41,9 +41,14 @@ export function useArticles(feeds: Feed[], activeFeedId: string | null) {
     }
   }, []);
 
+  const initialLoadDoneRef = useRef(false);
+  const feedsKey = feeds.map((f) => f.id).join(',');
   useEffect(() => {
-    load();
-  }, [load]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!initialLoadDoneRef.current && feedsKey) {
+      initialLoadDoneRef.current = true;
+      load();
+    }
+  }, [load, feedsKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const refresh = useCallback(() => {
     load();
