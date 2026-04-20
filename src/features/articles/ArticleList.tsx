@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Article, Feed } from '../../types';
 import { ArticleItem } from './ArticleItem';
+import { Loader } from '../../components/Loader';
 import './ArticleList.css';
 
 interface Props {
@@ -23,7 +24,7 @@ export function ArticleList({ articles, feeds, loading, error }: Props) {
   }
 
   if (loading) {
-    return <div className="article-list-state">Loading…</div>;
+    return <Loader />;
   }
 
   if (feeds.length === 0) {
