@@ -32,36 +32,39 @@ src/
 ├── App.tsx                         # Root — owns all state, wires components
 ├── index.css                       # CSS custom properties (theme), global reset
 ├── lib/
-│   ├── db.ts                       # IndexedDB CRUD (getFeeds, saveFeed, deleteFeed, getSettings, saveSettings)
-│   ├── rss.ts                      # parseFeed (RSS2+Atom) + fetchFeed via Cloudflare Worker
-│   └── favicon.ts                  # getFaviconUrl (Google favicon service)
+│   ├── db.ts                       # IndexedDB CRUD
+│   ├── rss.ts                      # parseFeed (RSS2+Atom) + fetchFeed (browser-like AU + decoding)
+│   ├── opml.ts                     # parseOPML + generateOPML
+│   └── favicon.ts                  # getFaviconUrl
 ├── features/
-│   ├── settings/useSettings.ts     # textSize (12–24px), theme toggle, persisted
+│   ├── settings/useSettings.ts     # textSize (14–36px), theme toggle, persisted
 │   ├── feeds/
-│   │   ├── useFeeds.ts             # addFeed/updateFeed/removeFeed, uuid ids, persisted
-│   │   └── AddFeedModal.tsx        # Add/edit feed modal with URL auto-name detection
+│   │   ├── useFeeds.ts             # add/update/remove/import feeds, auto-sorted by name
+│   │   ├── AddFeedModal.tsx        # Add/edit feed modal
+│   │   └── ImportOPMLModal.tsx     # OPML Import modal (URL or File)
 │   └── articles/
-│       ├── useArticles.ts          # Fetch + parse all/filtered feeds, sort by date
+│       ├── useArticles.ts          # Fetch + parse feeds, sort by date
 │       ├── ArticleItem.tsx         # Single article row + expand/collapse
-│       └── ArticleList.tsx         # List with empty states and error banner
+│       └── ArticleList.tsx         # List with states
 └── components/
-    ├── Navbar.tsx                  # Sticky navbar: sidebar toggle, feed dropdown, refresh, A+/A-, theme
-    └── Sidebar.tsx                 # Left overlay: feed list with edit/delete, add button
-
-worker/
-├── src/index.ts                    # Cloudflare Worker — CORS proxy for RSS fetching
-└── wrangler.toml
+    ├── Navbar.tsx                  # Sticky navbar: full-width feed dropdown, refresh, A+/A-, theme
+    ├── Sidebar.tsx                 # Left overlay: sorted feed list, Add/Import/Export OPML buttons
+    └── ConfirmModal.tsx            # Generic deletion confirmation modal
 ```
 
 ## Architecture
 
-**State management:** all state lives in `App.tsx` and is passed down as props. No context. No Redux.
+**State management:** all state lives in `App.tsx` and is passed down as props.
 
-**CSS theming:** CSS custom properties on `:root` (dark by default), overridden by `[data-theme="light"]`. The `--article-fs` variable is set inline on the root div via `style` prop and drives article title font size.
+**CSS Design System:** 
+- **Theming:** Custom properties on `:root`, overridden by `[data-theme="light"]`.
+- **Brutalist Style:** Thick solid borders (`2px solid var(--text)`) and bold outlines for buttons.
+- **Dynamic Sizing:** `--article-fs` drives article titles, descriptions (`calc(-4px)`), and navbar dropdown items.
 
-**RSS fetching flow:** `useArticles` → `fetchFeed` (rss.ts) → `VITE_WORKER_URL?url=<encoded>` (Cloudflare Worker) → returns XML → `parseFeed` → Article[]
-
-**Infinite render fix:** `useArticles` uses refs (`feedsRef`, `activeFeedIdRef`) to avoid stale closures, with a `feedsKey` string in `useEffect` deps to trigger re-fetch only when feed IDs change.
+**RSS/OPML flow:** 
+- **Worker:** Cloudflare Worker acts as a CORS proxy. It uses a realistic browser `User-Agent` and `Referer` headers to avoid being blocked by providers (e.g., Reddit).
+- **Decoding:** RSS titles and descriptions are processed through a `decodeEntities` utility to handle HTML entities (e.g., `&#8217;`).
+- **OPML:** Supports both import (multiple feeds) and export (timestamped `.opml.xml` files).
 
 ## Environment variables
 
@@ -75,27 +78,17 @@ VITE_WORKER_URL=https://openfeed-proxy.YOUR_NAME.workers.dev
 
 ## Cloudflare Worker
 
-Located in `worker/`. Deploy separately:
-
-```bash
-cd worker
-npx wrangler login
-npm run deploy        # → https://openfeed-proxy.YOUR_NAME.workers.dev
-npm run dev           # local at http://localhost:8787
-```
+Located in `worker/`. Uses `wrangler` for deployment.
+Key modification: Spoofs browser headers (`User-Agent`, `Accept`, `Referer`) to bypass firewall blocks on RSS feeds like Reddit.
 
 ## Testing
 
-Tests use `fake-indexeddb` for IndexedDB isolation. The `db.ts` module caches the IDB connection as a module-level singleton — resetting `global.indexedDB` in `beforeEach` doesn't clear the cache. Tests are written with upsert-safe data so ordering doesn't matter.
-
-Hook tests use `@testing-library/react`'s `renderHook` + `act`. `useFeeds` tests use `vi.resetModules()` for proper isolation.
+Tests use `fake-indexeddb` for IndexedDB isolation. Hook tests use `renderHook` + `act` from `@testing-library/react`.
 
 ## Deployment
 
-GitHub Actions (`.github/workflows/deploy.yml`) builds on push to `main` and deploys `dist/` to the `gh-pages` branch. Requires `VITE_WORKER_URL` secret set in repo settings.
-
-App URL: `https://YOUR_USERNAME.github.io/OpenFeed/`
+GitHub Actions (`.github/workflows/deploy.yml`) builds on push to `main`. Requires `VITE_WORKER_URL` secret.
 
 ## Color palette (8 colors)
 
-`#DC2626` `#EA580C` `#CA8A04` `#16A34A` `#2563EB` `#7C3AED` `#DB2777` `#475569`
+`#DC2626` `#F97316` `#FFB800` `#16A34A` `#2563EB` `#7C3AED` `#DB2777` `#475569`
