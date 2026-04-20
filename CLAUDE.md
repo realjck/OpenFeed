@@ -66,6 +66,11 @@ src/
 - **Decoding:** RSS titles and descriptions are processed through a `decodeEntities` utility to handle HTML entities (e.g., `&#8217;`).
 - **OPML:** Supports both import (multiple feeds) and export (timestamped `.opml.xml` files).
 
+**Article loading strategy (`useArticles`):**
+- All feeds are always fetched at once (on mount or manual refresh). Selecting a feed filters in memory — no refetch.
+- `feedColor` is derived from current feed state at render time, so color changes in the edit modal reflect instantly without a refetch.
+- Add/remove/import feeds set a `pendingRefreshRef` flag in `App.tsx`; the actual refetch fires when the sidebar closes (`handleCloseSidebar`), not immediately.
+
 ## Environment variables
 
 ```bash
