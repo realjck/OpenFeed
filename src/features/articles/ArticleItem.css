@@ -1,7 +1,7 @@
 .article-item {
   display: flex;
   align-items: stretch;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid var(--border);
   cursor: pointer;
   transition: background var(--transition);
   user-select: none;
@@ -17,7 +17,7 @@
 }
 
 .article-color-bar {
-  width: 4px;
+  width: 7px;
   flex-shrink: 0;
 }
 
@@ -63,7 +63,7 @@
 .article-title {
   font-size: var(--article-fs);
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1.2;
   word-break: break-word;
 }
 
@@ -84,7 +84,7 @@
 .article-description {
   font-size: calc(var(--article-fs) - 4px);
   color: var(--text-muted);
-  line-height: 1.6;
+  line-height: 1.4;
 }
 
 .article-link-btn {
