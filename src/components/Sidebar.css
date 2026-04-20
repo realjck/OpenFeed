@@ -177,3 +177,10 @@
   background: var(--text);
   color: var(--bg);
 }
+
+.sidebar-import-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  border-color: var(--border);
+  color: var(--text-muted);
+}

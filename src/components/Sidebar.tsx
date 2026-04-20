@@ -9,9 +9,10 @@ interface Props {
   onImportOPML: () => void;
   onEditFeed: (feed: Feed) => void;
   onDeleteFeed: (id: string) => void;
+  onExportOPML: () => void;
 }
 
-export function Sidebar({ open, feeds, onClose, onAddFeed, onImportOPML, onEditFeed, onDeleteFeed }: Props) {
+export function Sidebar({ open, feeds, onClose, onAddFeed, onImportOPML, onExportOPML, onEditFeed, onDeleteFeed }: Props) {
   return (
     <>
       {open && <div className="sidebar-overlay" onClick={onClose} />}
@@ -41,6 +42,7 @@ export function Sidebar({ open, feeds, onClose, onAddFeed, onImportOPML, onEditF
         <div className="sidebar-footer">
           <button className="sidebar-add-btn" onClick={onAddFeed}>＋ Add Feed</button>
           <button className="sidebar-import-btn" onClick={onImportOPML}>⤓ Import OPML</button>
+          <button className="sidebar-import-btn" onClick={onExportOPML} disabled={feeds.length === 0}>⤴ Export OPML</button>
         </div>
       </aside>
     </>

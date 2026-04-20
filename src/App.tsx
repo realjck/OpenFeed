@@ -10,7 +10,7 @@ import { ImportOPMLModal } from './features/feeds/ImportOPMLModal';
 import { ArticleList } from './features/articles/ArticleList';
 import type { Feed } from './types';
 import { FEED_COLORS } from './types';
-import { type OPMLFeed } from './lib/opml';
+import { type OPMLFeed, generateOPML } from './lib/opml';
 import './index.css';
 
 export default function App() {
@@ -66,6 +66,31 @@ export default function App() {
       setDeletingFeed(null);
     }
   }
+  
+  function handleExportOPML() {
+    if (feeds.length === 0) return;
+    const opml = generateOPML(feeds.map(f => ({ name: f.name, url: f.url })));
+    const blob = new Blob([opml], { type: 'text/xml' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    // Create filename: openfeed-YYYY-MM-DD-HH-MM-SS.opml.xml
+    const now = new Date();
+    const YYYY = now.getFullYear();
+    const MM = String(now.getMonth() + 1).padStart(2, '0');
+    const DD = String(now.getDate()).padStart(2, '0');
+    const HH = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    const filename = `openfeed-${YYYY}-${MM}-${DD}-${HH}-${mm}-${ss}.opml.xml`;
+
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <div
@@ -92,6 +117,7 @@ export default function App() {
         onImportOPML={() => setImportOPMLOpen(true)}
         onEditFeed={handleEditFeed}
         onDeleteFeed={(id) => setDeletingFeed(feeds.find((f) => f.id === id) || null)}
+        onExportOPML={handleExportOPML}
       />
       <main>
         <ArticleList
