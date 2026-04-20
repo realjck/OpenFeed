@@ -100,7 +100,7 @@ export default function App() {
       <Navbar
         feeds={feeds}
         activeFeedId={activeFeedId}
-        onSelectFeed={setActiveFeedId}
+        onSelectFeed={(id) => { setActiveFeedId(id); window.scrollTo({ top: 0, behavior: 'instant' }); }}
         onRefresh={refresh}
         onToggleSidebar={() => setSidebarOpen((o) => !o)}
         settings={settings}
