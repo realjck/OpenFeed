@@ -34,14 +34,16 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: calc(var(--article-fs) - 4px);
   color: var(--text-muted);
+  width: 100%;
 }
 
 .article-favicon {
-  width: 14px;
-  height: 14px;
+  width: 1.1em;
+  height: 1.1em;
   border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .article-feed-name {
@@ -50,10 +52,13 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .article-date {
-  opacity: 0.8;
+  margin-left: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .article-body {

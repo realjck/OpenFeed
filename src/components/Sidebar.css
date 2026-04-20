@@ -105,7 +105,7 @@
 }
 
 .sidebar-feed-name {
-  font-size: 16px;
+  font-size: calc(var(--article-fs) - 4px);
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
@@ -113,7 +113,7 @@
 }
 
 .sidebar-feed-url {
-  font-size: 13px;
+  font-size: calc(var(--article-fs) - 4px);
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
