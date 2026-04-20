@@ -41,18 +41,19 @@ export function useArticles(feeds: Feed[], activeFeedId: string | null) {
     }
   }, []);
 
-  const feedsKey = feeds.map((f) => f.id).join(',');
   useEffect(() => {
     load();
-  }, [load, feedsKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [load]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const refresh = useCallback(() => {
     load();
   }, [load]);
 
-  const articles = activeFeedId
+  const feedColorMap = new Map(feeds.map((f) => [f.id, f.color]));
+  const articles = (activeFeedId
     ? allArticles.filter((a) => a.feedId === activeFeedId)
-    : allArticles;
+    : allArticles
+  ).map((a) => ({ ...a, feedColor: feedColorMap.get(a.feedId) ?? a.feedColor }));
 
   return { articles, loading, error, refresh };
 }

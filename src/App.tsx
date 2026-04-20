@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSettings } from './features/settings/useSettings';
 import { useFeeds } from './features/feeds/useFeeds';
 import { useArticles } from './features/articles/useArticles';
@@ -19,6 +19,7 @@ export default function App() {
   const [activeFeedId, setActiveFeedId] = useState<string | null>(null);
   const { articles, loading, error, refresh } = useArticles(feeds, activeFeedId);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pendingRefreshRef = useRef(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [importOPMLOpen, setImportOPMLOpen] = useState(false);
   const [editingFeed, setEditingFeed] = useState<Feed | null>(null);
@@ -54,16 +55,25 @@ export default function App() {
 
     if (newFeedsData.length > 0) {
       await importFeeds(newFeedsData);
+      pendingRefreshRef.current = true;
     }
     setImportOPMLOpen(false);
   }
 
+  function handleCloseSidebar() {
+    setSidebarOpen(false);
+    if (pendingRefreshRef.current) {
+      pendingRefreshRef.current = false;
+      refresh();
+    }
+  }
 
   function confirmDelete() {
     if (deletingFeed) {
       removeFeed(deletingFeed.id);
       if (activeFeedId === deletingFeed.id) setActiveFeedId(null);
       setDeletingFeed(null);
+      pendingRefreshRef.current = true;
     }
   }
   
@@ -102,7 +112,7 @@ export default function App() {
         activeFeedId={activeFeedId}
         onSelectFeed={(id) => { setActiveFeedId(id); window.scrollTo({ top: 0, behavior: 'instant' }); }}
         onRefresh={refresh}
-        onToggleSidebar={() => setSidebarOpen((o) => !o)}
+        onToggleSidebar={() => { if (sidebarOpen) handleCloseSidebar(); else setSidebarOpen(true); }}
         settings={settings}
         onIncreaseFont={() => setTextSize(settings.textSize + 1)}
         onDecreaseFont={() => setTextSize(settings.textSize - 1)}
@@ -112,7 +122,7 @@ export default function App() {
       <Sidebar
         open={sidebarOpen}
         feeds={feeds}
-        onClose={() => setSidebarOpen(false)}
+        onClose={handleCloseSidebar}
         onAddFeed={handleAddFeed}
         onImportOPML={() => setImportOPMLOpen(true)}
         onEditFeed={handleEditFeed}
@@ -130,7 +140,7 @@ export default function App() {
       {modalOpen && (
         <AddFeedModal
           editFeed={editingFeed}
-          onSave={addFeed}
+          onSave={async (data) => { await addFeed(data); pendingRefreshRef.current = true; }}
           onUpdate={updateFeed}
           onClose={handleCloseModal}
         />
