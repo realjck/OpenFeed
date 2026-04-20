@@ -11,6 +11,26 @@
   flex: 1;
 }
 
+.url-input-group button {
+  padding: 0 16px;
+  border-radius: var(--radius);
+  border: 2px solid var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all var(--transition);
+}
+
+.url-input-group button:hover:not(:disabled) {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.url-input-group button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .divider {
   display: flex;
   align-items: center;
@@ -55,16 +75,17 @@
   width: 100%;
   padding: 10px;
   border-radius: var(--radius);
-  border: 1px dashed var(--border);
-  background: var(--surface2);
+  border: 2px solid var(--text);
+  background: transparent;
   color: var(--text);
+  font-weight: 600;
   cursor: pointer;
   transition: all var(--transition);
 }
 
 .btn-secondary:hover {
-  background: var(--surface3);
-  border-color: var(--text-muted);
+  background: var(--text);
+  color: var(--bg);
 }
 
 .import-error {

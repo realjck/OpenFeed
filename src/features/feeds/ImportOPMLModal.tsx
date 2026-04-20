@@ -78,7 +78,7 @@ export function ImportOPMLModal({ onImport, onClose }: Props) {
                   placeholder="https://example.com/subscriptions.opml"
                   required
                 />
-                <button type="submit" className="btn-primary" disabled={importing}>
+                <button type="submit" disabled={importing}>
                   {importing ? 'Importing...' : 'Import'}
                 </button>
               </div>

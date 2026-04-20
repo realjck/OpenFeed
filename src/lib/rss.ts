@@ -7,8 +7,16 @@ const parser = new XMLParser({
   isArray: (name) => ['item', 'entry', 'link'].includes(name),
 });
 
+function decodeEntities(text: string): string {
+  if (!text) return '';
+  const textArea = document.createElement('textarea');
+  textArea.innerHTML = text;
+  return textArea.value;
+}
+
 function stripHtml(html: string): string {
-  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const decoded = decodeEntities(html);
+  return decoded.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 function extractImageFromHtml(html: string): string | undefined {
@@ -51,7 +59,7 @@ export function parseFeed(
         feedId,
         feedColor,
         feedName,
-        title: String(entry.title ?? ''),
+        title: decodeEntities(String(entry.title ?? '')),
         description: stripHtml(rawDesc),
         link,
         pubDate: new Date(entry.published ?? entry.updated ?? 0),
@@ -79,7 +87,7 @@ export function parseFeed(
       feedId,
       feedColor,
       feedName,
-      title: String(item.title ?? ''),
+      title: decodeEntities(String(item.title ?? '')),
       description: stripHtml(rawDesc),
       link,
       pubDate: new Date(item.pubDate ?? 0),

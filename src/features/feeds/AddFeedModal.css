@@ -122,21 +122,22 @@
   padding: 8px 20px;
   border-radius: var(--radius);
   font-size: 14px;
-  font-weight: 500;
-  border: 1px solid var(--border);
-  transition: background var(--transition);
+  font-weight: 600;
+  border: 2px solid var(--text);
+  transition: all var(--transition);
 }
 
 .modal-actions button:hover {
-  background: var(--surface2);
+  background: var(--text);
+  color: var(--bg);
 }
 
 .btn-primary {
-  background: #2563EB !important;
-  border-color: #2563EB !important;
-  color: white !important;
+  background: var(--text) !important;
+  border-color: var(--text) !important;
+  color: var(--bg) !important;
 }
 
 .btn-primary:hover {
-  background: #1d4ed8 !important;
+  opacity: 0.9;
 }

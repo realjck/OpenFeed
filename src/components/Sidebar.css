@@ -156,28 +156,24 @@
   font-size: 16px;
   font-weight: 500;
   width: 100%;
-  transition: all var(--transition);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  border: 2px solid var(--text);
 }
 
 .sidebar-add-btn {
-  border: 2px dashed var(--border);
+  background: var(--text);
+  color: var(--bg);
 }
 
 .sidebar-add-btn:hover {
-  background: var(--surface2);
-  border-color: var(--text-muted);
+  opacity: 0.9;
 }
 
 .sidebar-import-btn {
-  background: var(--surface2);
-  color: var(--text-muted);
+  background: transparent;
+  color: var(--text);
 }
 
 .sidebar-import-btn:hover {
-  background: var(--surface3);
-  color: var(--text);
+  background: var(--text);
+  color: var(--bg);
 }
