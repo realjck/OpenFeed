@@ -35,5 +35,7 @@ export function useFeeds() {
     setFeeds((prev) => [...prev, ...newFeeds]);
   }, []);
 
-  return { feeds, addFeed, updateFeed, removeFeed, importFeeds };
+  const sortedFeeds = [...feeds].sort((a, b) => a.name.localeCompare(b.name));
+
+  return { feeds: sortedFeeds, addFeed, updateFeed, removeFeed, importFeeds };
 }
