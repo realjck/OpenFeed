@@ -46,7 +46,7 @@ export function Navbar({
           style={activeFeed ? { color: activeFeed.color, borderColor: activeFeed.color } : undefined}
           onClick={() => setDropdownOpen((o) => !o)}
         >
-          {activeFeed ? activeFeed.name : 'ALL'}
+          <span className="navbar-feed-name">{activeFeed ? activeFeed.name : 'ALL'}</span>
           <span className="dropdown-arrow">{dropdownOpen ? '▲' : '▼'}</span>
         </button>
         {dropdownOpen && (
