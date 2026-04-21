@@ -80,8 +80,7 @@
 .article-image {
   max-height: 200px;
   max-width: 100%;
-  width: auto;
-  object-fit: contain;
+  height: auto;
   border-radius: var(--radius);
   display: block;
 }
