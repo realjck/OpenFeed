@@ -78,6 +78,7 @@
   list-style: none;
   max-height: calc(100vh - var(--navbar-h) - 40px);
   overflow-y: auto;
+  overscroll-behavior: contain;
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   z-index: 1000;
 }
