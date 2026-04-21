@@ -3,10 +3,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useArticles } from './useArticles';
 import type { Feed, Article } from '../../types';
 
-const mockFeed: Feed = { id: 'f1', name: 'Test', url: 'https://example.com/feed', color: '#DC2626' };
+const mockFeed: Feed = { id: 'f1', name: 'Test', url: 'https://example.com/feed' };
 
 const mockArticle: Article = {
-  feedId: 'f1', feedColor: '#DC2626', feedName: 'Test',
+  feedId: 'f1', feedName: 'Test',
   title: 'A', description: 'B', link: 'https://example.com/a',
   pubDate: new Date('2024-01-01'), sourceDomain: 'example.com',
 };
@@ -31,7 +31,7 @@ describe('useArticles', () => {
     (fetchFeed as any).mockResolvedValue({ channelTitle: 'Test', articles: [mockArticle] });
     const { result } = renderHook(() => useArticles([mockFeed], null));
     await act(async () => {});
-    expect(fetchFeed).toHaveBeenCalledWith('https://example.com/feed', 'f1', '#DC2626', 'Test');
+    expect(fetchFeed).toHaveBeenCalledWith('https://example.com/feed', 'f1', 'Test');
     expect(result.current.articles).toHaveLength(1);
   });
 
@@ -39,9 +39,10 @@ describe('useArticles', () => {
     const { fetchFeed } = await import('../../lib/rss');
     const otherArticle = { ...mockArticle, feedId: 'f2' };
     (fetchFeed as any).mockResolvedValue({ channelTitle: 'Test', articles: [mockArticle, otherArticle] });
-    const { result } = renderHook(() => useArticles([mockFeed], 'f2'));
+    const { result } = renderHook(() => useArticles([mockFeed], 'f1'));
     await act(async () => {});
-    expect(result.current.articles).toHaveLength(0); // f2 articles would come from f2 feed
+    expect(result.current.articles).toHaveLength(1);
+    expect(result.current.articles[0].feedId).toBe('f1');
   });
 
   it('sets error on fetch failure', async () => {

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import type { Feed, Settings } from '../types';
+import { FeedIcon } from './FeedIcon';
 import './Navbar.css';
 
 interface Props {
@@ -43,7 +44,6 @@ export function Navbar({
       <div className="navbar-feed-dropdown" ref={dropdownRef}>
         <button
           className="navbar-feed-btn"
-          style={activeFeed ? { color: activeFeed.color, borderColor: activeFeed.color } : undefined}
           onClick={() => setDropdownOpen((o) => !o)}
         >
           <span className="navbar-feed-name">{activeFeed ? activeFeed.name : 'ALL'}</span>
@@ -65,7 +65,7 @@ export function Navbar({
                   className={`dropdown-item ${activeFeedId === f.id ? 'active' : ''}`}
                   onClick={() => { onSelectFeed(f.id); setDropdownOpen(false); }}
                 >
-                  <span className="dot" style={{ background: f.color }} />
+                  <FeedIcon feed={f} />
                   {f.name}
                 </button>
               </li>

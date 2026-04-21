@@ -34,13 +34,13 @@ function getDomain(url: string): string {
 
 export interface ParsedFeed {
   channelTitle: string;
+  siteUrl: string;
   articles: Article[];
 }
 
 export function parseFeed(
   xml: string,
   feedId: string,
-  feedColor: string,
   feedName: string
 ): ParsedFeed {
   const parsed = parser.parse(xml);
@@ -49,6 +49,9 @@ export function parseFeed(
   if (parsed.feed) {
     const feed = parsed.feed;
     const channelTitle: string = feed.title ?? feedName;
+    const feedLinks: any[] = Array.isArray(feed.link) ? feed.link : [];
+    const altLink = feedLinks.find((l: any) => typeof l === 'object' && (!l['@_rel'] || l['@_rel'] === 'alternate'));
+    const siteUrl: string = altLink?.['@_href'] ?? '';
     const entries = feed.entry ?? [];
     const articles: Article[] = entries.map((entry: any) => {
       const linkArr: any[] = Array.isArray(entry.link) ? entry.link : [entry.link];
@@ -57,7 +60,6 @@ export function parseFeed(
       const rawDesc: string = String(entry.summary ?? entry.content ?? '');
       return {
         feedId,
-        feedColor,
         feedName,
         title: decodeEntities(String(entry.title ?? '')),
         description: stripHtml(rawDesc),
@@ -67,12 +69,14 @@ export function parseFeed(
         sourceDomain: getDomain(link),
       };
     });
-    return { channelTitle, articles };
+    return { channelTitle, siteUrl, articles };
   }
 
   // RSS 2.0
   const channel = parsed?.rss?.channel ?? {};
   const channelTitle: string = channel.title ?? feedName;
+  const channelLinks: any[] = Array.isArray(channel.link) ? channel.link : [];
+  const siteUrl: string = channelLinks.find((l: any) => typeof l === 'string') ?? '';
   const items: any[] = channel.item ?? [];
   const articles: Article[] = items.map((item: any) => {
     const rawLink = item.link;
@@ -85,7 +89,6 @@ export function parseFeed(
         : undefined;
     return {
       feedId,
-      feedColor,
       feedName,
       title: decodeEntities(String(item.title ?? '')),
       description: stripHtml(rawDesc),
@@ -95,18 +98,17 @@ export function parseFeed(
       sourceDomain: getDomain(link),
     };
   });
-  return { channelTitle, articles };
+  return { channelTitle, siteUrl, articles };
 }
 
 export async function fetchFeed(
   url: string,
   feedId: string,
-  feedColor: string,
   feedName: string
 ): Promise<ParsedFeed> {
   const workerUrl = import.meta.env.VITE_WORKER_URL;
   const response = await fetch(`${workerUrl}?url=${encodeURIComponent(url)}`);
   if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
   const xml = await response.text();
-  return parseFeed(xml, feedId, feedColor, feedName);
+  return parseFeed(xml, feedId, feedName);
 }

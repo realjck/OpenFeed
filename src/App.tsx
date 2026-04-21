@@ -9,7 +9,6 @@ import { AddFeedModal } from './features/feeds/AddFeedModal';
 import { ImportOPMLModal } from './features/feeds/ImportOPMLModal';
 import { ArticleList } from './features/articles/ArticleList';
 import type { Feed } from './types';
-import { FEED_COLORS } from './types';
 import { type OPMLFeed, generateOPML } from './lib/opml';
 import './index.css';
 
@@ -47,11 +46,7 @@ export default function App() {
   async function handleImportOPML(importedFeeds: OPMLFeed[]) {
     const newFeedsData = importedFeeds
       .filter((f) => !feeds.some((existing) => existing.url === f.url))
-      .map((f) => ({
-        name: f.name,
-        url: f.url,
-        color: FEED_COLORS[Math.floor(Math.random() * FEED_COLORS.length)],
-      }));
+      .map((f) => ({ name: f.name, url: f.url }));
 
     if (newFeedsData.length > 0) {
       await importFeeds(newFeedsData);
@@ -129,7 +124,7 @@ export default function App() {
         onDeleteFeed={(id) => setDeletingFeed(feeds.find((f) => f.id === id) || null)}
         onExportOPML={handleExportOPML}
       />
-      <main>
+      <main className={sidebarOpen ? 'blurred' : ''}>
         <ArticleList
           articles={articles}
           feeds={feeds}

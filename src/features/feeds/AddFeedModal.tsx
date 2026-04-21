@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Feed } from '../../types';
-import { FEED_COLORS } from '../../types';
 import { fetchFeed } from '../../lib/rss';
+import { getFeedIconUrl } from '../../lib/favicon';
 import './AddFeedModal.css';
 
 interface Props {
@@ -14,14 +14,14 @@ interface Props {
 export function AddFeedModal({ editFeed, onSave, onUpdate, onClose }: Props) {
   const [url, setUrl] = useState(editFeed?.url ?? '');
   const [name, setName] = useState(editFeed?.name ?? '');
-  const [color, setColor] = useState(editFeed?.color ?? FEED_COLORS[0]);
+  const [siteUrl, setSiteUrl] = useState('');
   const [fetchingName, setFetchingName] = useState(false);
 
   useEffect(() => {
     if (editFeed) {
       setUrl(editFeed.url);
       setName(editFeed.name);
-      setColor(editFeed.color);
+      setSiteUrl('');
     }
   }, [editFeed]);
 
@@ -29,8 +29,9 @@ export function AddFeedModal({ editFeed, onSave, onUpdate, onClose }: Props) {
     if (!url || editFeed || name) return;
     setFetchingName(true);
     try {
-      const result = await fetchFeed(url, '', '', '');
+      const result = await fetchFeed(url, '', '');
       if (result.channelTitle) setName(result.channelTitle);
+      if (result.siteUrl) setSiteUrl(result.siteUrl);
     } catch {
       // silent — user can type name manually
     } finally {
@@ -42,9 +43,9 @@ export function AddFeedModal({ editFeed, onSave, onUpdate, onClose }: Props) {
     e.preventDefault();
     if (!url || !name) return;
     if (editFeed) {
-      onUpdate({ ...editFeed, url, name, color });
+      onUpdate({ ...editFeed, url, name });
     } else {
-      onSave({ url, name, color });
+      onSave({ url, name, iconUrl: getFeedIconUrl(url, siteUrl) });
     }
     onClose();
   }
@@ -79,19 +80,6 @@ export function AddFeedModal({ editFeed, onSave, onUpdate, onClose }: Props) {
               required
             />
           </label>
-          <div className="modal-color-label">Color</div>
-          <div className="modal-colors">
-            {FEED_COLORS.map((c) => (
-              <button
-                key={c}
-                type="button"
-                className={`color-swatch ${color === c ? 'selected' : ''}`}
-                style={{ background: c }}
-                onClick={() => setColor(c)}
-                title={c}
-              />
-            ))}
-          </div>
           <div className="modal-actions">
             <button type="button" onClick={onClose}>Cancel</button>
             <button type="submit" className="btn-primary">

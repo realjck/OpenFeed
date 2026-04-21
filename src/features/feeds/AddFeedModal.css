@@ -84,32 +84,6 @@
   font-size: 12px;
 }
 
-.modal-color-label {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.modal-colors {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.color-swatch {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 3px solid transparent;
-  transition: border-color var(--transition), transform var(--transition);
-}
-
-.color-swatch:hover {
-  transform: scale(1.1);
-}
-
-.color-swatch.selected {
-  border-color: var(--text);
-}
 
 .modal-actions {
   display: flex;

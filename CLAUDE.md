@@ -28,19 +28,19 @@ npm run coverage     # coverage report
 
 ```
 src/
-├── types.ts                        # Feed, Settings, Article interfaces + FEED_COLORS + DEFAULT_SETTINGS
+├── types.ts                        # Feed, Settings, Article interfaces + DEFAULT_SETTINGS
 ├── App.tsx                         # Root — owns all state, wires components
 ├── index.css                       # CSS custom properties (theme), global reset
 ├── lib/
 │   ├── db.ts                       # IndexedDB CRUD
-│   ├── rss.ts                      # parseFeed (RSS2+Atom) + fetchFeed (browser-like AU + decoding)
+│   ├── rss.ts                      # parseFeed (RSS2+Atom, returns siteUrl) + fetchFeed
 │   ├── opml.ts                     # parseOPML + generateOPML
-│   └── favicon.ts                  # getFaviconUrl
+│   └── favicon.ts                  # getFaviconUrl, getFeedIconUrl (uses siteUrl when available)
 ├── features/
 │   ├── settings/useSettings.ts     # textSize (14–36px), theme toggle, persisted
 │   ├── feeds/
-│   │   ├── useFeeds.ts             # add/update/remove/import feeds, auto-sorted by name
-│   │   ├── AddFeedModal.tsx        # Add/edit feed modal
+│   │   ├── useFeeds.ts             # add/update/remove/import feeds, computes iconUrl on save
+│   │   ├── AddFeedModal.tsx        # Add/edit feed modal (captures siteUrl from RSS for better icon)
 │   │   └── ImportOPMLModal.tsx     # OPML Import modal (URL or File)
 │   └── articles/
 │       ├── useArticles.ts          # Fetch + parse feeds, sort by date
@@ -49,6 +49,7 @@ src/
 └── components/
     ├── Navbar.tsx                  # Sticky navbar: full-width feed dropdown, refresh, A+/A-, theme
     ├── Sidebar.tsx                 # Left overlay: sorted feed list, Add/Import/Export OPML buttons
+    ├── FeedIcon.tsx                # Feed favicon img with letter fallback, sized in em
     └── ConfirmModal.tsx            # Generic deletion confirmation modal
 ```
 
@@ -66,9 +67,14 @@ src/
 - **Decoding:** RSS titles and descriptions are processed through a `decodeEntities` utility to handle HTML entities (e.g., `&#8217;`).
 - **OPML:** Supports both import (multiple feeds) and export (timestamped `.opml.xml` files).
 
+**Feed icons:**
+- `iconUrl` is stored on each `Feed` in IndexedDB, computed via `getFeedIconUrl` (Google Favicon Service at `sz=32`).
+- When available, the RSS channel `<link>` (site URL) is used as the favicon domain (better quality than feed URL hostname).
+- Icons are computed at add/import/update time in `useFeeds`. Existing feeds without `iconUrl` get a fallback computed on-the-fly in `FeedIcon` and are updated next time the feed is edited.
+- `FeedIcon` renders an `<img>` with a letter fallback (first char of feed name) when the icon fails or is missing.
+
 **Article loading strategy (`useArticles`):**
 - All feeds are always fetched at once (on mount or manual refresh). Selecting a feed filters in memory — no refetch.
-- `feedColor` is derived from current feed state at render time, so color changes in the edit modal reflect instantly without a refetch.
 - Add/remove/import feeds set a `pendingRefreshRef` flag in `App.tsx`; the actual refetch fires when the sidebar closes (`handleCloseSidebar`), not immediately.
 
 ## Environment variables
@@ -94,6 +100,3 @@ Tests use `fake-indexeddb` for IndexedDB isolation. Hook tests use `renderHook` 
 
 GitHub Actions (`.github/workflows/deploy.yml`) builds on push to `main`. Requires `VITE_WORKER_URL` secret.
 
-## Color palette (8 colors)
-
-`#DC2626` `#F97316` `#FFB800` `#16A34A` `#2563EB` `#7C3AED` `#DB2777` `#475569`
