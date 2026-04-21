@@ -52,7 +52,7 @@ describe('feeds', () => {
 describe('settings', () => {
   it('returns default settings when none saved', async () => {
     const settings = await getSettings();
-    expect(settings.textSize).toBe(16);
+    expect(settings.textSize).toBe(18);
     expect(settings.theme).toBe('dark');
   });
 

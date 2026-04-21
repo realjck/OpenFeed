@@ -90,12 +90,6 @@
   background: var(--surface2);
 }
 
-.sidebar-feed-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
 
 .sidebar-feed-info {
   flex: 1;

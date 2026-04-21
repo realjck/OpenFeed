@@ -11,17 +11,17 @@ describe('useSettings', () => {
   it('initializes with default settings', async () => {
     const { result } = renderHook(() => useSettings());
     await act(async () => {});
-    expect(result.current.settings.textSize).toBe(16);
+    expect(result.current.settings.textSize).toBe(18);
     expect(result.current.settings.theme).toBe('dark');
   });
 
-  it('setTextSize clamps to 12-24', async () => {
+  it('setTextSize clamps to 14-36', async () => {
     const { result } = renderHook(() => useSettings());
     await act(async () => {});
-    act(() => result.current.setTextSize(30));
-    expect(result.current.settings.textSize).toBe(24);
+    act(() => result.current.setTextSize(40));
+    expect(result.current.settings.textSize).toBe(36);
     act(() => result.current.setTextSize(5));
-    expect(result.current.settings.textSize).toBe(12);
+    expect(result.current.settings.textSize).toBe(14);
   });
 
   it('toggleTheme switches between light and dark', async () => {

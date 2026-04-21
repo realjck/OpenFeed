@@ -1,0 +1,24 @@
+.feed-icon {
+  width: 1.1em;
+  height: 1.1em;
+  border-radius: 2px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.feed-icon-fallback {
+  width: 1.1em;
+  height: 1.1em;
+  font-size: 0.7em;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  background: var(--surface2);
+  border: 1px solid var(--text-muted);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text-muted);
+  user-select: none;
+}

@@ -22,7 +22,6 @@ export function ArticleItem({ article, expanded, onToggle }: Props) {
       className={`article-item ${expanded ? 'article-item--expanded' : ''}`}
       onClick={onToggle}
     >
-      <span className="article-color-bar" style={{ background: article.feedColor }} />
       <div className="article-main">
         <div className="article-meta">
           <img

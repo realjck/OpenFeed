@@ -20,7 +20,7 @@ export function useArticles(feeds: Feed[], activeFeedId: string | null) {
     setError(null);
     try {
       const results = await Promise.allSettled(
-        currentFeeds.map((f) => fetchFeed(f.url, f.id, f.color, f.name))
+        currentFeeds.map((f) => fetchFeed(f.url, f.id, f.name))
       );
       const all: Article[] = [];
       const errors: string[] = [];
@@ -54,11 +54,9 @@ export function useArticles(feeds: Feed[], activeFeedId: string | null) {
     load();
   }, [load]);
 
-  const feedColorMap = new Map(feeds.map((f) => [f.id, f.color]));
-  const articles = (activeFeedId
+  const articles = activeFeedId
     ? allArticles.filter((a) => a.feedId === activeFeedId)
-    : allArticles
-  ).map((a) => ({ ...a, feedColor: feedColorMap.get(a.feedId) ?? a.feedColor }));
+    : allArticles;
 
   return { articles, loading, error, refresh };
 }

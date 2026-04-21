@@ -16,10 +16,6 @@
   background: var(--surface);
 }
 
-.article-color-bar {
-  width: 7px;
-  flex-shrink: 0;
-}
 
 .article-main {
   flex: 1;

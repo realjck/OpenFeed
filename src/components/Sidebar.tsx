@@ -1,4 +1,5 @@
 import type { Feed } from '../types';
+import { FeedIcon } from './FeedIcon';
 import './Sidebar.css';
 
 interface Props {
@@ -27,7 +28,7 @@ export function Sidebar({ open, feeds, onClose, onAddFeed, onImportOPML, onExpor
           )}
           {feeds.map((f) => (
             <li key={f.id} className="sidebar-feed-item">
-              <span className="sidebar-feed-dot" style={{ background: f.color }} />
+              <FeedIcon feed={f} />
               <div className="sidebar-feed-info">
                 <span className="sidebar-feed-name">{f.name}</span>
                 <span className="sidebar-feed-url">{f.url}</span>
