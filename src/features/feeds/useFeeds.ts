@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { type Feed } from '../../types';
 import { getFeeds, saveFeed, deleteFeed } from '../../lib/db';
 import { getFeedIconUrl } from '../../lib/favicon';
+import { fetchFeed } from '../../lib/rss';
 
 export function useFeeds() {
   const [feeds, setFeeds] = useState<Feed[]>([]);
@@ -29,8 +30,14 @@ export function useFeeds() {
   }, []);
 
   const importFeeds = useCallback(async (dataArray: Omit<Feed, 'id'>[]) => {
-    const newFeeds: Feed[] = dataArray.map((data) => ({ id: uuidv4(), iconUrl: getFeedIconUrl(data.url), ...data }));
-    // Batch save to DB
+    const tempId = '';
+    const siteUrls = await Promise.allSettled(
+      dataArray.map((data) => fetchFeed(data.url, tempId, data.name).then((r) => r.siteUrl))
+    );
+    const newFeeds: Feed[] = dataArray.map((data, i) => {
+      const siteUrl = siteUrls[i].status === 'fulfilled' ? siteUrls[i].value : '';
+      return { id: uuidv4(), iconUrl: getFeedIconUrl(data.url, siteUrl), ...data };
+    });
     for (const feed of newFeeds) {
       await saveFeed(feed);
     }
