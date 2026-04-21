@@ -20,7 +20,12 @@ export function Sidebar({ open, feeds, onClose, onAddFeed, onImportOPML, onExpor
       <aside className={`sidebar ${open ? 'sidebar--open' : ''}`}>
         <div className="sidebar-header">
           <span className="sidebar-title">RSS Feeds</span>
-          <button className="sidebar-close" onClick={onClose}>✕</button>
+          <button className="sidebar-close" onClick={onClose} aria-label="Close">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="2" y1="2" x2="14" y2="14"/>
+              <line x1="14" y1="2" x2="2" y2="14"/>
+            </svg>
+          </button>
         </div>
         <ul className="sidebar-feed-list">
           {feeds.length === 0 && (
