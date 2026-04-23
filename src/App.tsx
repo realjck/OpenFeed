@@ -124,7 +124,7 @@ export default function App() {
         onDeleteFeed={(id) => setDeletingFeed(feeds.find((f) => f.id === id) || null)}
         onExportOPML={handleExportOPML}
       />
-      <main className={sidebarOpen ? 'blurred' : ''}>
+      <main>
         <ArticleList
           articles={articles}
           feeds={feeds}

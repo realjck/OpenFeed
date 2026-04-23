@@ -89,14 +89,6 @@ a {
   color: inherit;
 }
 
-main {
-  transition: filter var(--transition);
-}
-
-main.blurred {
-  filter: blur(4px);
-  pointer-events: none;
-}
 
 .visually-hidden {
   position: absolute;

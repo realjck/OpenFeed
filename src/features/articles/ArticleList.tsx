@@ -30,7 +30,21 @@ export function ArticleList({ articles, feeds, loading, error }: Props) {
   if (feeds.length === 0) {
     return (
       <div className="article-list-state">
-        <p>Add RSS feeds using the sidebar to get started.</p>
+        <div className="welcome-card">
+          <h1 className="welcome-title">OPEN FEED</h1>
+          <p className="welcome-subtitle">RSS Reader</p>
+          <hr className="welcome-divider" />
+          <p>Add RSS feeds using the sidebar to get started.</p>
+          <p className="welcome-storage">Your feed list is saved locally in your browser.</p>
+          <a
+            className="welcome-github"
+            href="https://github.com/realjck/OpenFeed/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Fork me on GitHub
+          </a>
+        </div>
       </div>
     );
   }

@@ -13,6 +13,66 @@
   font-size: 15px;
 }
 
+.welcome-card {
+  border: 2px solid var(--text);
+  border-radius: 12px;
+  padding: 36px 40px;
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.welcome-title {
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  margin: 0;
+}
+
+.welcome-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.welcome-divider {
+  width: 100%;
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 4px 0;
+}
+
+.welcome-storage {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.welcome-github {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 8px 20px;
+  border: 2px solid var(--text);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.welcome-github:hover {
+  background: var(--text);
+  color: var(--bg);
+}
+
 .article-list-error {
   padding: 10px 16px;
   background: rgba(220, 38, 38, 0.1);
