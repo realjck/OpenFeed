@@ -57,7 +57,10 @@ export function parseFeed(
       const linkArr: any[] = Array.isArray(entry.link) ? entry.link : [entry.link];
       const linkObj = linkArr.find((l: any) => typeof l === 'object' && l['@_href']);
       const link: string = linkObj ? linkObj['@_href'] : (typeof linkArr[0] === 'string' ? linkArr[0] : '');
-      const rawDesc: string = String(entry.summary ?? entry.content ?? '');
+      const rawContent = entry.summary ?? entry.content;
+      const rawDesc: string = rawContent !== null && typeof rawContent === 'object'
+        ? String(rawContent['#text'] ?? '')
+        : String(rawContent ?? '');
       return {
         feedId,
         feedName,
