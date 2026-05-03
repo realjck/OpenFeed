@@ -9,7 +9,7 @@ interface Props {
   feeds: Feed[];
   loading: boolean;
   error: string | null;
-  progress?: { loaded: number; total: number };
+  progress?: { loaded: number; total: number } | null;
   onCancel?: () => void;
 }
 

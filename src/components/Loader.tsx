@@ -1,7 +1,7 @@
 import './Loader.css';
 
 interface LoaderProps {
-  progress?: { loaded: number; total: number };
+  progress?: { loaded: number; total: number } | null;
   onCancel?: () => void;
 }
 
