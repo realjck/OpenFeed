@@ -43,13 +43,14 @@ src/
 │   │   ├── AddFeedModal.tsx        # Add/edit feed modal (captures siteUrl from RSS for better icon)
 │   │   └── ImportOPMLModal.tsx     # OPML Import modal (URL or File)
 │   └── articles/
-│       ├── useArticles.ts          # Fetch + parse feeds, sort by date
+│       ├── useArticles.ts          # Fetch + parse feeds, progress tracking, cancel, sort by date
 │       ├── ArticleItem.tsx         # Single article row + expand/collapse
 │       └── ArticleList.tsx         # List with states
 └── components/
     ├── Navbar.tsx                  # Sticky navbar: full-width feed dropdown, refresh, A+/A-, theme
     ├── Sidebar.tsx                 # Left overlay: sorted feed list, Add/Import/Export OPML buttons
     ├── FeedIcon.tsx                # Feed favicon img with letter fallback, sized in em
+    ├── Loader.tsx                  # Loading animation + optional progress text + Cancel button
     └── ConfirmModal.tsx            # Generic deletion confirmation modal
 ```
 
@@ -76,6 +77,8 @@ src/
 **Article loading strategy (`useArticles`):**
 - All feeds are always fetched at once (on mount or manual refresh). Selecting a feed filters in memory — no refetch.
 - Add/remove/import feeds set a `pendingRefreshRef` flag in `App.tsx`; the actual refetch fires when the sidebar closes (`handleCloseSidebar`), not immediately.
+- Each `load()` creates an `AbortController`; feeds are fetched in parallel with individual promise wrappers that increment a `loaded` counter. Exposes `progress: { loaded, total } | null` and `cancel()`.
+- `cancel()` aborts in-flight fetches immediately, applies partial results, and marks unsettled feeds as `"FeedName: cancelled"` in the error string. `fetchFeed` accepts an optional `signal?: AbortSignal` forwarded to `fetch()`.
 
 ## Environment variables
 
