@@ -98,4 +98,14 @@ describe('fetchFeed', () => {
     (fetch as any).mockResolvedValue({ ok: false, status: 404, text: async () => '' });
     await expect(fetchFeed('https://bad.com/feed.xml', 'f1', '')).rejects.toThrow('404');
   });
+
+  it('passes abort signal to fetch when provided', async () => {
+    (fetch as any).mockResolvedValue({ ok: true, text: async () => RSS_XML });
+    const controller = new AbortController();
+    await fetchFeed('https://myblog.com/feed.xml', 'f1', 'My Blog', controller.signal);
+    expect(fetch).toHaveBeenCalledWith(
+      'https://proxy.example.com?url=https%3A%2F%2Fmyblog.com%2Ffeed.xml',
+      { signal: controller.signal }
+    );
+  });
 });
