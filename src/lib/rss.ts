@@ -107,10 +107,14 @@ export function parseFeed(
 export async function fetchFeed(
   url: string,
   feedId: string,
-  feedName: string
+  feedName: string,
+  signal?: AbortSignal
 ): Promise<ParsedFeed> {
   const workerUrl = import.meta.env.VITE_WORKER_URL;
-  const response = await fetch(`${workerUrl}?url=${encodeURIComponent(url)}`);
+  const fetchUrl = `${workerUrl}?url=${encodeURIComponent(url)}`;
+  const response = signal
+    ? await fetch(fetchUrl, { signal })
+    : await fetch(fetchUrl);
   if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
   const xml = await response.text();
   return parseFeed(xml, feedId, feedName);

@@ -9,9 +9,11 @@ interface Props {
   feeds: Feed[];
   loading: boolean;
   error: string | null;
+  progress?: { loaded: number; total: number } | null;
+  onCancel?: () => void;
 }
 
-export function ArticleList({ articles, feeds, loading, error }: Props) {
+export function ArticleList({ articles, feeds, loading, error, progress, onCancel }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   function getArticleId(a: Article) {
@@ -24,7 +26,7 @@ export function ArticleList({ articles, feeds, loading, error }: Props) {
   }
 
   if (loading) {
-    return <Loader />;
+    return <Loader progress={progress} onCancel={onCancel} />;
   }
 
   if (feeds.length === 0) {
