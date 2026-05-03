@@ -24,3 +24,10 @@ dist-ssr
 *.sln
 *.sw?
 .claude/settings.local.json
+
+# Istanbul / nyc
+/coverage
+/.nyc_output
+
+# Claude
+.claude/settings.local.json
