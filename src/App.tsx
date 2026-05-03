@@ -16,7 +16,7 @@ export default function App() {
   const { settings, setTextSize, toggleTheme } = useSettings();
   const { feeds, addFeed, updateFeed, removeFeed, importFeeds } = useFeeds();
   const [activeFeedId, setActiveFeedId] = useState<string | null>(null);
-  const { articles, loading, error, refresh } = useArticles(feeds, activeFeedId);
+  const { articles, loading, error, refresh, progress, cancel } = useArticles(feeds, activeFeedId);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pendingRefreshRef = useRef(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -130,6 +130,8 @@ export default function App() {
           feeds={feeds}
           loading={loading}
           error={error}
+          progress={progress}
+          onCancel={cancel}
         />
       </main>
       {modalOpen && (
