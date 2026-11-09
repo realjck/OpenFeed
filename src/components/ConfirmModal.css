@@ -106,6 +106,7 @@
 }
 
 .modal-actions button:not(.btn-primary):not(.btn-danger):hover {
-  background: var(--surface2);
-  border-color: var(--text-muted);
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
 }
