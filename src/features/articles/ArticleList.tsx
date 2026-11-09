@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Article, Feed } from '../../types';
 import { ArticleItem } from './ArticleItem';
 import { Loader } from '../../components/Loader';
+import { Welcome } from './Welcome';
 import './ArticleList.css';
 
 interface Props {
@@ -30,25 +31,7 @@ export function ArticleList({ articles, feeds, loading, error, progress, onCance
   }
 
   if (feeds.length === 0) {
-    return (
-      <div className="article-list-state">
-        <div className="welcome-card">
-          <h1 className="welcome-title">OPEN FEED</h1>
-          <p className="welcome-subtitle">RSS Reader</p>
-          <hr className="welcome-divider" />
-          <p>Add RSS feeds using the sidebar to get started.</p>
-          <p className="welcome-storage">Your feed list is saved locally in your browser.</p>
-          <a
-            className="welcome-github"
-            href="https://github.com/realjck/OpenFeed/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Fork me on GitHub
-          </a>
-        </div>
-      </div>
-    );
+    return <Welcome />;
   }
 
   if (articles.length === 0) {

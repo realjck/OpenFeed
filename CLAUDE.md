@@ -35,7 +35,8 @@ src/
 │   ├── db.ts                       # IndexedDB CRUD
 │   ├── rss.ts                      # parseFeed (RSS2+Atom, returns siteUrl) + fetchFeed
 │   ├── opml.ts                     # parseOPML + generateOPML
-│   └── favicon.ts                  # getFaviconUrl, getFeedIconUrl (uses siteUrl when available)
+│   ├── favicon.ts                  # getFaviconUrl, getFeedIconUrl (uses siteUrl when available)
+│   └── arrow.ts                    # arrowGeometry: orthogonal arrow paths (elbowPoints routing)
 ├── features/
 │   ├── settings/useSettings.ts     # textSize (14–36px), theme toggle, persisted
 │   ├── feeds/
@@ -45,10 +46,12 @@ src/
 │   └── articles/
 │       ├── useArticles.ts          # Fetch + parse feeds, progress tracking, cancel, sort by date
 │       ├── ArticleItem.tsx         # Single article row + expand/collapse
-│       └── ArticleList.tsx         # List with states
+│       ├── ArticleList.tsx         # List with states
+│       └── Welcome.tsx             # Empty state (no feeds): hint + arrow to the sidebar toggle
 └── components/
     ├── Navbar.tsx                  # Sticky navbar: full-width feed dropdown, refresh, A+/A-, theme
-    ├── Sidebar.tsx                 # Left overlay: sorted feed list, Add/Import/Export OPML buttons
+    ├── Sidebar.tsx                 # Left overlay: GitHub link + version, feed list, empty state, Add/Import/Export OPML
+    ├── GuideArrow.tsx               # Orthogonal arrow between two measured points, redrawn on resize
     ├── FeedIcon.tsx                # Feed favicon img with letter fallback, sized in em
     ├── Loader.tsx                  # Loading animation + optional progress text + Cancel button
     └── ConfirmModal.tsx            # Generic deletion confirmation modal
@@ -79,6 +82,8 @@ src/
 - Add/remove/import feeds set a `pendingRefreshRef` flag in `App.tsx`; the actual refetch fires when the sidebar closes (`handleCloseSidebar`), not immediately.
 - Each `load()` creates an `AbortController`; feeds are fetched in parallel with individual promise wrappers that increment a `loaded` counter. Exposes `progress: { loaded, total } | null` and `cancel()`.
 - `cancel()` aborts in-flight fetches immediately, applies partial results, and marks unsettled feeds as `"FeedName: cancelled"` in the error string. `fetchFeed` accepts an optional `signal?: AbortSignal` forwarded to `fetch()`.
+
+**Version:** `package.json` version is injected as the global `__APP_VERSION__` (Vite `define`) and shown in the sidebar header.
 
 ## Environment variables
 

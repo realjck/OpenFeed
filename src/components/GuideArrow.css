@@ -1,0 +1,45 @@
+.guide-arrow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  color: var(--text);
+}
+
+.guide-arrow-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  stroke-dasharray: 1;
+  animation: guide-arrow-draw 450ms linear 300ms both;
+}
+
+.guide-arrow-anchor,
+.guide-arrow-head {
+  fill: currentColor;
+}
+
+.guide-arrow-head {
+  animation: guide-arrow-reveal 1ms linear 750ms both;
+}
+
+@keyframes guide-arrow-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes guide-arrow-reveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guide-arrow-line,
+  .guide-arrow-head {
+    animation: none;
+  }
+}

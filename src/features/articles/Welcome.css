@@ -1,0 +1,62 @@
+.welcome {
+  position: relative;
+  min-height: calc(100dvh - var(--navbar-h));
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px 32px;
+}
+
+/* Sits under the sidebar toggle so the arrow stays a short hook at any width. */
+.welcome-hint {
+  margin: 88px 0 0 104px;
+  max-width: 22ch;
+  font-size: calc(var(--article-fs) + 4px);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.welcome-card {
+  margin: auto;
+  border: 2px solid var(--text);
+  border-radius: 12px;
+  padding: 36px 40px;
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.welcome-title {
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  margin: 0;
+}
+
+.welcome-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.welcome-divider {
+  width: 100%;
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 4px 0;
+}
+
+.welcome-storage {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}

@@ -44,6 +44,26 @@
   font-size: 17px;
 }
 
+.sidebar-repo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 14px;
+  margin-right: auto;
+  padding: 6px 8px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--transition), background var(--transition);
+}
+
+.sidebar-repo:hover {
+  color: var(--text);
+  background: var(--surface2);
+}
+
 .sidebar-close {
   width: 40px;
   height: 40px;
@@ -60,6 +80,8 @@
 
 .sidebar-feed-list {
   list-style: none;
+  display: flex;
+  flex-direction: column;
   flex: 1;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -76,10 +98,25 @@
   border-color: var(--surface);
 }
 
+/* Pushed to the lower part of the list so the arrow to "Add Feed" stays short. */
 .sidebar-empty {
-  padding: 16px;
+  margin: auto 0 112px;
+  padding: 0 32px;
+  text-align: center;
+}
+
+.sidebar-empty-title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.sidebar-empty-text {
+  margin: 10px auto 0;
+  max-width: 34ch;
+  font-size: 15px;
   color: var(--text-muted);
-  font-size: 16px;
+  text-wrap: pretty;
 }
 
 .sidebar-feed-item {

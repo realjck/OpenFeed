@@ -37,7 +37,7 @@ export function Navbar({
 
   return (
     <nav className="navbar">
-      <button className="navbar-btn" onClick={onToggleSidebar} title="Toggle sidebar">
+      <button id="sidebar-toggle" className="navbar-btn" onClick={onToggleSidebar} title="Toggle sidebar">
         ☰
       </button>
 
