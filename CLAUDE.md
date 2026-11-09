@@ -20,6 +20,7 @@ npm run dev          # dev server at http://localhost:5173/OpenFeed/
 npm run build        # production build → dist/
 npm run preview      # preview production build at http://localhost:4173/OpenFeed/
 npm run test:run     # run all tests once
+npm run lint         # ESLint (flat config, must stay at 0 problems)
 npm run test         # watch mode
 npm run coverage     # coverage report
 ```
@@ -51,7 +52,7 @@ src/
 └── components/
     ├── Navbar.tsx                  # Sticky navbar: full-width feed dropdown, refresh, A+/A-, theme
     ├── Sidebar.tsx                 # Left overlay: GitHub link + version, feed list, empty state, Add/Import/Export OPML
-    ├── GuideArrow.tsx               # Orthogonal arrow between two measured points, redrawn on resize
+    ├── GuideArrow.tsx              # Orthogonal arrow between two measured points, redrawn on resize
     ├── FeedIcon.tsx                # Feed favicon img with letter fallback, sized in em
     ├── Loader.tsx                  # Loading animation + optional progress text + Cancel button
     └── ConfirmModal.tsx            # Generic deletion confirmation modal
@@ -63,7 +64,9 @@ src/
 
 **CSS Design System:** 
 - **Theming:** Custom properties on `:root`, overridden by `[data-theme="light"]`.
-- **Brutalist Style:** Thick solid borders (`2px solid var(--text)`) and bold outlines for buttons.
+- **Brutalist Style:** Thick solid borders (`2px solid var(--text)`) and bold outlines for buttons. Decorations stay geometric (straight lines, right angles, solid shapes), never hand-drawn or organic.
+- **Hover on outlined buttons:** invert colors (`background: var(--text); color: var(--bg)`). Always set both together.
+- **Modal CSS is global:** `.modal-actions button` is styled in both `ConfirmModal.css` and `AddFeedModal.css`, and the rules combine (`ConfirmModal.css` wins on hover by specificity). Check both files when changing modal buttons.
 - **Dynamic Sizing:** `--article-fs` drives article titles, descriptions (`calc(-4px)`), and navbar dropdown items.
 
 **RSS/OPML flow:** 
@@ -82,6 +85,8 @@ src/
 - Add/remove/import feeds set a `pendingRefreshRef` flag in `App.tsx`; the actual refetch fires when the sidebar closes (`handleCloseSidebar`), not immediately.
 - Each `load()` creates an `AbortController`; feeds are fetched in parallel with individual promise wrappers that increment a `loaded` counter. Exposes `progress: { loaded, total } | null` and `cancel()`.
 - `cancel()` aborts in-flight fetches immediately, applies partial results, and marks unsettled feeds as `"FeedName: cancelled"` in the error string. `fetchFeed` accepts an optional `signal?: AbortSignal` forwarded to `fetch()`.
+
+**Empty-state guidance:** `Welcome` and the empty `Sidebar` draw a `GuideArrow` between measured elements. The welcome arrow targets `#sidebar-toggle` (id on the navbar burger) and ends below the navbar, which is stacked above it and would hide the tip. Keep that id if the navbar changes.
 
 **Version:** `package.json` version is injected as the global `__APP_VERSION__` (Vite `define`) and shown in the sidebar header.
 
@@ -107,4 +112,6 @@ Tests use `fake-indexeddb` for IndexedDB isolation. Hook tests use `renderHook` 
 ## Deployment
 
 GitHub Actions (`.github/workflows/deploy.yml`) builds on push to `main`. Requires `VITE_WORKER_URL` secret.
+
+**Releases:** bump `version` in `package.json` (shown in the app), push to `main`, test in production, then tag `vX.Y.Z` (annotated) and create the GitHub release with user-facing notes. Pushing a tag does not trigger a deploy.
 
