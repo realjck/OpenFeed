@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Feed } from '../../types';
 import { fetchFeed } from '../../lib/rss';
 import { getFeedIconUrl } from '../../lib/favicon';
+import '../../components/Modal.css';
 import './AddFeedModal.css';
 
 interface Props {

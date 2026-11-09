@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { parseOPML, fetchOPML, type OPMLFeed } from '../../lib/opml';
+import '../../components/Modal.css';
 import './ImportOPMLModal.css';
-import './AddFeedModal.css';
 
 interface Props {
   onImport: (feeds: OPMLFeed[]) => void;

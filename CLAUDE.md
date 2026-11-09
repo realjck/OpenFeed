@@ -55,6 +55,7 @@ src/
     ├── GuideArrow.tsx              # Orthogonal arrow between two measured points, redrawn on resize
     ├── FeedIcon.tsx                # Feed favicon img with letter fallback, sized in em
     ├── Loader.tsx                  # Loading animation + optional progress text + Cancel button
+    ├── Modal.css                   # Shared modal styles (shell, form, action buttons)
     └── ConfirmModal.tsx            # Generic deletion confirmation modal
 ```
 
@@ -66,7 +67,7 @@ src/
 - **Theming:** Custom properties on `:root`, overridden by `[data-theme="light"]`.
 - **Brutalist Style:** Thick solid borders (`2px solid var(--text)`) and bold outlines for buttons. Decorations stay geometric (straight lines, right angles, solid shapes), never hand-drawn or organic.
 - **Hover on outlined buttons:** invert colors (`background: var(--text); color: var(--bg)`). Always set both together.
-- **Modal CSS is global:** `.modal-actions button` is styled in both `ConfirmModal.css` and `AddFeedModal.css`, and the rules combine (`ConfirmModal.css` wins on hover by specificity). Check both files when changing modal buttons.
+- **Modals:** shared styles (backdrop, header, form, `.modal-actions` buttons, `.btn-primary`, `.btn-danger`) live only in `components/Modal.css`, imported by each modal. Modal-specific files hold only their own classes; never redefine shared modal selectors there (CSS is global, duplicates combine by load order).
 - **Dynamic Sizing:** `--article-fs` drives article titles, descriptions (`calc(-4px)`), and navbar dropdown items.
 
 **RSS/OPML flow:** 

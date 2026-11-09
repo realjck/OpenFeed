@@ -1,3 +1,4 @@
+import './Modal.css';
 import './ConfirmModal.css';
 
 interface Props {
