@@ -2,6 +2,7 @@ import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useArticles } from './useArticles';
 import type { Feed, Article } from '../../types';
+import type { ParsedFeed } from '../../lib/rss';
 
 const mockFeed: Feed = { id: 'f1', name: 'Test', url: 'https://example.com/feed' };
 
@@ -28,7 +29,7 @@ describe('useArticles', () => {
 
   it('fetches articles for all feeds on mount', async () => {
     const { fetchFeed } = await import('../../lib/rss');
-    (fetchFeed as any).mockResolvedValue({ channelTitle: 'Test', articles: [mockArticle] });
+    vi.mocked(fetchFeed).mockResolvedValue({ channelTitle: 'Test', siteUrl: '', articles: [mockArticle] });
     const { result } = renderHook(() => useArticles([mockFeed], null));
     await act(async () => {});
     expect(fetchFeed).toHaveBeenCalledWith(
@@ -40,7 +41,7 @@ describe('useArticles', () => {
   it('filters articles by activeFeedId', async () => {
     const { fetchFeed } = await import('../../lib/rss');
     const otherArticle = { ...mockArticle, feedId: 'f2' };
-    (fetchFeed as any).mockResolvedValue({ channelTitle: 'Test', articles: [mockArticle, otherArticle] });
+    vi.mocked(fetchFeed).mockResolvedValue({ channelTitle: 'Test', siteUrl: '', articles: [mockArticle, otherArticle] });
     const { result } = renderHook(() => useArticles([mockFeed], 'f1'));
     await act(async () => {});
     expect(result.current.articles).toHaveLength(1);
@@ -49,7 +50,7 @@ describe('useArticles', () => {
 
   it('sets error on fetch failure', async () => {
     const { fetchFeed } = await import('../../lib/rss');
-    (fetchFeed as any).mockRejectedValue(new Error('Network error'));
+    vi.mocked(fetchFeed).mockRejectedValue(new Error('Network error'));
     const { result } = renderHook(() => useArticles([mockFeed], null));
     await act(async () => {});
     expect(result.current.error).toContain('Network error');
@@ -57,11 +58,11 @@ describe('useArticles', () => {
 
   it('exposes progress while loading', async () => {
     const { fetchFeed } = await import('../../lib/rss');
-    let resolve1: (val: any) => void;
-    let resolve2: (val: any) => void;
-    (fetchFeed as any)
-      .mockImplementationOnce(() => new Promise(r => { resolve1 = r; }))
-      .mockImplementationOnce(() => new Promise(r => { resolve2 = r; }));
+    let resolve1: (val: ParsedFeed) => void;
+    let resolve2: (val: ParsedFeed) => void;
+    vi.mocked(fetchFeed)
+      .mockImplementationOnce(() => new Promise<ParsedFeed>(r => { resolve1 = r; }))
+      .mockImplementationOnce(() => new Promise<ParsedFeed>(r => { resolve2 = r; }));
 
     const feed2: Feed = { id: 'f2', name: 'Feed2', url: 'https://example.com/feed2' };
     const { result } = renderHook(() => useArticles([mockFeed, feed2], null));
@@ -69,13 +70,13 @@ describe('useArticles', () => {
     expect(result.current.progress).toEqual({ loaded: 0, total: 2 });
 
     await act(async () => {
-      resolve1!({ channelTitle: '', articles: [mockArticle] });
+      resolve1!({ channelTitle: '', siteUrl: '', articles: [mockArticle] });
       await new Promise(r => setTimeout(r, 0));
     });
     expect(result.current.progress).toEqual({ loaded: 1, total: 2 });
 
     await act(async () => {
-      resolve2!({ channelTitle: '', articles: [] });
+      resolve2!({ channelTitle: '', siteUrl: '', articles: [] });
       await new Promise(r => setTimeout(r, 0));
     });
     expect(result.current.progress).toBeNull();
@@ -83,12 +84,12 @@ describe('useArticles', () => {
 
   it('cancel applies partial articles and marks pending feeds as cancelled', async () => {
     const { fetchFeed } = await import('../../lib/rss');
-    let resolve1: (val: any) => void;
-    (fetchFeed as any)
-      .mockImplementationOnce(() => new Promise(r => { resolve1 = r; }))
-      .mockImplementationOnce((_u: any, _i: any, _n: any, signal: AbortSignal) =>
+    let resolve1: (val: ParsedFeed) => void;
+    vi.mocked(fetchFeed)
+      .mockImplementationOnce(() => new Promise<ParsedFeed>(r => { resolve1 = r; }))
+      .mockImplementationOnce((_u, _i, _n, signal) =>
         new Promise((_, reject) => {
-          signal.addEventListener('abort', () =>
+          signal!.addEventListener('abort', () =>
             reject(new DOMException('aborted', 'AbortError'))
           );
         })
@@ -98,7 +99,7 @@ describe('useArticles', () => {
     const { result } = renderHook(() => useArticles([mockFeed, feed2], null));
 
     await act(async () => {
-      resolve1!({ channelTitle: '', articles: [mockArticle] });
+      resolve1!({ channelTitle: '', siteUrl: '', articles: [mockArticle] });
       await new Promise(r => setTimeout(r, 0));
     });
 
@@ -114,7 +115,7 @@ describe('useArticles', () => {
 
   it('refresh after cancel creates a fresh load', async () => {
     const { fetchFeed } = await import('../../lib/rss');
-    (fetchFeed as any).mockResolvedValue({ channelTitle: '', articles: [mockArticle] });
+    vi.mocked(fetchFeed).mockResolvedValue({ channelTitle: '', siteUrl: '', articles: [mockArticle] });
 
     const { result } = renderHook(() => useArticles([mockFeed], null));
 

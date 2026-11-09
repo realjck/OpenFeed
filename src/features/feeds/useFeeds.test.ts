@@ -3,7 +3,7 @@ import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 beforeEach(() => {
-  (global as any).indexedDB = new IDBFactory();
+  globalThis.indexedDB = new IDBFactory();
   vi.resetModules();
 });
 

@@ -6,18 +6,30 @@ const parser = new XMLParser({
   isArray: (name) => ['outline'].includes(name),
 });
 
+// Shape read from fast-xml-parser output. Untrusted input: every field is optional.
+interface OutlineNode {
+  '@_xmlUrl'?: string;
+  '@_text'?: string;
+  '@_title'?: string;
+  outline?: OutlineNode | OutlineNode[];
+}
+
+interface ParsedOPML {
+  opml?: { body?: { outline?: OutlineNode | OutlineNode[] } };
+}
+
 export interface OPMLFeed {
   name: string;
   url: string;
 }
 
 export function parseOPML(xml: string): OPMLFeed[] {
-  const parsed = parser.parse(xml);
+  const parsed: ParsedOPML = parser.parse(xml);
   const feeds: OPMLFeed[] = [];
 
-  function walk(nodes: any[]) {
+  function walk(nodes: OutlineNode[]) {
     for (const node of nodes) {
-      if (node['@_type'] === 'rss' || node['@_xmlUrl']) {
+      if (node['@_xmlUrl']) {
         feeds.push({
           name: node['@_text'] || node['@_title'] || 'Untitled Feed',
           url: node['@_xmlUrl'],

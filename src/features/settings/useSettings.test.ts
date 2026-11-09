@@ -4,7 +4,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { useSettings } from './useSettings';
 
 beforeEach(() => {
-  (global as any).indexedDB = new IDBFactory();
+  globalThis.indexedDB = new IDBFactory();
 });
 
 describe('useSettings', () => {

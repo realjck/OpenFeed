@@ -84,10 +84,10 @@ describe('fetchFeed', () => {
   });
 
   it('calls worker URL with encoded feed URL', async () => {
-    (fetch as any).mockResolvedValue({
+    vi.mocked(fetch).mockResolvedValue({
       ok: true,
       text: async () => RSS_XML,
-    });
+    } as Response);
     await fetchFeed('https://myblog.com/feed.xml', 'f1', 'My Blog');
     expect(fetch).toHaveBeenCalledWith(
       'https://proxy.example.com?url=https%3A%2F%2Fmyblog.com%2Ffeed.xml'
@@ -95,12 +95,12 @@ describe('fetchFeed', () => {
   });
 
   it('throws on non-ok response', async () => {
-    (fetch as any).mockResolvedValue({ ok: false, status: 404, text: async () => '' });
+    vi.mocked(fetch).mockResolvedValue({ ok: false, status: 404, text: async () => '' } as Response);
     await expect(fetchFeed('https://bad.com/feed.xml', 'f1', '')).rejects.toThrow('404');
   });
 
   it('passes abort signal to fetch when provided', async () => {
-    (fetch as any).mockResolvedValue({ ok: true, text: async () => RSS_XML });
+    vi.mocked(fetch).mockResolvedValue({ ok: true, text: async () => RSS_XML } as Response);
     const controller = new AbortController();
     await fetchFeed('https://myblog.com/feed.xml', 'f1', 'My Blog', controller.signal);
     expect(fetch).toHaveBeenCalledWith(

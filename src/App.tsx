@@ -136,6 +136,7 @@ export default function App() {
       </main>
       {modalOpen && (
         <AddFeedModal
+          key={editingFeed?.id ?? 'new'}
           editFeed={editingFeed}
           onSave={async (data) => { await addFeed(data); pendingRefreshRef.current = true; }}
           onUpdate={updateFeed}

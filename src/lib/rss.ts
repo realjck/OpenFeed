@@ -32,6 +32,46 @@ function getDomain(url: string): string {
   }
 }
 
+// Shapes read from fast-xml-parser output. Untrusted input: every field is optional.
+type XmlText = string | number | { '#text'?: string | number };
+
+interface XmlLink {
+  '@_href'?: string;
+  '@_rel'?: string;
+}
+
+interface AtomEntry {
+  title?: XmlText;
+  link?: XmlLink | string | (XmlLink | string)[];
+  summary?: XmlText;
+  content?: XmlText;
+  published?: string;
+  updated?: string;
+}
+
+interface RssItem {
+  title?: XmlText;
+  link?: string | string[];
+  description?: XmlText;
+  pubDate?: string;
+  enclosure?: { '@_url'?: string; '@_type'?: string };
+}
+
+interface ParsedXml {
+  feed?: {
+    title?: string;
+    link?: (XmlLink | string)[];
+    entry?: AtomEntry[];
+  };
+  rss?: {
+    channel?: {
+      title?: string;
+      link?: (XmlLink | string)[];
+      item?: RssItem[];
+    };
+  };
+}
+
 export interface ParsedFeed {
   channelTitle: string;
   siteUrl: string;
@@ -43,20 +83,22 @@ export function parseFeed(
   feedId: string,
   feedName: string
 ): ParsedFeed {
-  const parsed = parser.parse(xml);
+  const parsed: ParsedXml = parser.parse(xml);
 
   // Atom feed
   if (parsed.feed) {
     const feed = parsed.feed;
     const channelTitle: string = feed.title ?? feedName;
-    const feedLinks: any[] = Array.isArray(feed.link) ? feed.link : [];
-    const altLink = feedLinks.find((l: any) => typeof l === 'object' && (!l['@_rel'] || l['@_rel'] === 'alternate'));
+    const feedLinks = Array.isArray(feed.link) ? feed.link : [];
+    const altLink = feedLinks.find(
+      (l): l is XmlLink => typeof l === 'object' && (!l['@_rel'] || l['@_rel'] === 'alternate'),
+    );
     const siteUrl: string = altLink?.['@_href'] ?? '';
     const entries = feed.entry ?? [];
-    const articles: Article[] = entries.map((entry: any) => {
-      const linkArr: any[] = Array.isArray(entry.link) ? entry.link : [entry.link];
-      const linkObj = linkArr.find((l: any) => typeof l === 'object' && l['@_href']);
-      const link: string = linkObj ? linkObj['@_href'] : (typeof linkArr[0] === 'string' ? linkArr[0] : '');
+    const articles: Article[] = entries.map((entry) => {
+      const linkArr = Array.isArray(entry.link) ? entry.link : [entry.link];
+      const linkObj = linkArr.find((l): l is XmlLink => typeof l === 'object' && !!l['@_href']);
+      const link: string = linkObj?.['@_href'] ?? (typeof linkArr[0] === 'string' ? linkArr[0] : '');
       const rawContent = entry.summary ?? entry.content;
       const rawDesc: string = rawContent !== null && typeof rawContent === 'object'
         ? String(rawContent['#text'] ?? '')
@@ -78,10 +120,10 @@ export function parseFeed(
   // RSS 2.0
   const channel = parsed?.rss?.channel ?? {};
   const channelTitle: string = channel.title ?? feedName;
-  const channelLinks: any[] = Array.isArray(channel.link) ? channel.link : [];
-  const siteUrl: string = channelLinks.find((l: any) => typeof l === 'string') ?? '';
-  const items: any[] = channel.item ?? [];
-  const articles: Article[] = items.map((item: any) => {
+  const channelLinks = Array.isArray(channel.link) ? channel.link : [];
+  const siteUrl: string = channelLinks.find((l): l is string => typeof l === 'string') ?? '';
+  const items = channel.item ?? [];
+  const articles: Article[] = items.map((item) => {
     const rawLink = item.link;
     const link: string = Array.isArray(rawLink) ? (rawLink[0] ?? '') : (rawLink ?? '');
     const rawDesc: string = String(item.description ?? '');

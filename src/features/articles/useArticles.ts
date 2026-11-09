@@ -9,7 +9,10 @@ export function useArticles(feeds: Feed[], activeFeedId: string | null) {
   const [progress, setProgress] = useState<{ loaded: number; total: number } | null>(null);
 
   const feedsRef = useRef(feeds);
-  feedsRef.current = feeds;
+  // Declared before the initial-load effect so load() always reads the committed feed list.
+  useEffect(() => {
+    feedsRef.current = feeds;
+  }, [feeds]);
 
   const cancelRef = useRef<() => void>(() => {});
   const cancel = useCallback(() => { cancelRef.current(); }, []);
@@ -55,8 +58,8 @@ export function useArticles(feeds: Feed[], activeFeedId: string | null) {
         .then((result) => {
           partialArticles.push(...result.articles);
         })
-        .catch((err: any) => {
-          if (err.name !== 'AbortError') {
+        .catch((err: { name?: string; message?: string } | null) => {
+          if (err?.name !== 'AbortError') {
             partialErrors.push(`${f.name}: ${err?.message ?? 'Unknown error'}`);
           }
         })
@@ -82,7 +85,7 @@ export function useArticles(feeds: Feed[], activeFeedId: string | null) {
       initialLoadDoneRef.current = true;
       load();
     }
-  }, [load, feedsKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [load, feedsKey]);
 
   const refresh = useCallback(() => {
     load();

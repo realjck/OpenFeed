@@ -5,7 +5,7 @@ import type { Feed, Settings } from '../types';
 
 beforeEach(() => {
   // fresh IndexedDB for each test
-  (global as any).indexedDB = new IDBFactory();
+  globalThis.indexedDB = new IDBFactory();
   // Reset the cached db instance in the module
   vi.resetModules();
 });

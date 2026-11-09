@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Feed } from '../../types';
 import { fetchFeed } from '../../lib/rss';
 import { getFeedIconUrl } from '../../lib/favicon';
@@ -16,14 +16,6 @@ export function AddFeedModal({ editFeed, onSave, onUpdate, onClose }: Props) {
   const [name, setName] = useState(editFeed?.name ?? '');
   const [siteUrl, setSiteUrl] = useState('');
   const [fetchingName, setFetchingName] = useState(false);
-
-  useEffect(() => {
-    if (editFeed) {
-      setUrl(editFeed.url);
-      setName(editFeed.name);
-      setSiteUrl('');
-    }
-  }, [editFeed]);
 
   async function handleUrlBlur() {
     if (!url || editFeed || name) return;
